@@ -1,0 +1,69 @@
+name: 构建 Windows 和 iPhone
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+      - name: 编译 Windows 便携版
+        run: dotnet publish windows/USBPhoneSpeaker.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o build/windows
+      - name: 打包
+        shell: pwsh
+        run: |
+          Copy-Item README.md,LICENSE,THIRD_PARTY_NOTICES.txt build/windows/
+          Compress-Archive build/windows/* build/USBPhoneSpeaker-Windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: USBPhoneSpeaker-Windows-x64
+          path: build/USBPhoneSpeaker-Windows-x64.zip
+  ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: 测试无锁音频缓冲和协议
+        run: |
+          mkdir -p build
+          clang -std=c11 -Wall -Wextra -Werror -fsanitize=address,undefined tests/ring_test.c ios/Sources/AudioRing.c -o build/ring_test
+          build/ring_test
+      - name: 生成 Xcode 工程
+        run: |
+          brew install xcodegen
+          cd ios
+          xcodegen generate
+      - name: 编译未签名 iPhone App
+        run: |
+          xcodebuild -project ios/USBPhoneSpeaker.xcodeproj -scheme USBPhoneSpeaker -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' -archivePath "$PWD/build/USBPhoneSpeaker.xcarchive" CODE_SIGNING_ALLOWED=NO archive
+      - name: 打包供 Sideloadly 签名的 IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/USBPhoneSpeaker.xcarchive/Products/Applications/USBPhoneSpeaker.app build/Payload/
+          cd build
+          zip -qr USBPhoneSpeaker-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: USBPhoneSpeaker-iOS-unsigned
+          path: build/USBPhoneSpeaker-unsigned.ipa
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, ios]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: build/artifacts
+          merge-multiple: true
+      - name: 发布可下载版本
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" build/artifacts/* --title "USB 喇叭 $GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md

@@ -1,0 +1,29 @@
+name: USBPhoneSpeaker
+options:
+  bundleIdPrefix: io.github.sanciyuandehundan
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  USBPhoneSpeaker:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.sanciyuandehundan.USBPhoneSpeaker
+        SWIFT_VERSION: "5.0"
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/Bridge.h
+        CLANG_C_LANGUAGE_STANDARD: c11
+        TARGETED_DEVICE_FAMILY: "1,2"
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGNING_ALLOWED: NO
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: USB 喇叭
+        UILaunchScreen: {}
+        UIBackgroundModes: [audio]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        NSLocalNetworkUsageDescription: 通过 USB 接收电脑发送的声音。

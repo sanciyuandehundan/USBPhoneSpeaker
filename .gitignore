@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+build/
+*.xcarchive/
+*.xcodeproj/
+*.ipa
+*.zip
+.DS_Store
+.vs/
