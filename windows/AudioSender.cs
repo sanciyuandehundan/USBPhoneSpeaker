@@ -49,6 +49,7 @@ internal static class AudioSender
         capture.DataAvailable += (_, e) => queue.Writer.TryWrite(e.Buffer.AsSpan(0, e.BytesRecorded).ToArray());
         capture.RecordingStopped += (_, e) => queue.Writer.TryComplete(e.Exception);
         capture.StartRecording();
+        var disconnected = WatchDisconnect(stream, queue.Writer, ct);
         status($"正在通过 USB 发送 · {format.SampleRate} Hz · {format.Channels} 声道\n采集请求：10 ms；手机缓冲请看 iPhone。总延迟需实测。");
         try
         {
@@ -62,6 +63,22 @@ internal static class AudioSender
         finally
         {
             capture.StopRecording();
+            client.Dispose();
+            await disconnected;
+        }
+    }
+
+    private static async Task WatchDisconnect(Stream stream, ChannelWriter<byte[]> writer, CancellationToken ct)
+    {
+        try
+        {
+            int received = await stream.ReadAsync(new byte[1], ct);
+            writer.TryComplete(new IOException(received == 0
+                ? "iPhone 已断开，请重新开始接收。" : "iPhone 返回了意外数据，请重新连接。"));
+        }
+        catch (Exception ex) when (ex is IOException or ObjectDisposedException or OperationCanceledException)
+        {
+            writer.TryComplete(ex);
         }
     }
 }

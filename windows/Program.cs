@@ -25,7 +25,6 @@ internal sealed class MainForm : Form
     readonly Button start = new() { Text = "开始发送", AutoSize = true, Enabled = false };
     readonly Label status = new() { Text = "连接 iPhone 后点击刷新设备。", Dock = DockStyle.Fill, AutoSize = true };
     CancellationTokenSource? session;
-    Task? running;
     bool closeAfterStop;
 
     public MainForm()
@@ -97,9 +96,8 @@ internal sealed class MainForm : Form
         status.Text = "正在连接手机……";
         try
         {
-            running = Task.Run(() => AudioSender.Run(phone, output.Id,
+            await Task.Run(() => AudioSender.Run(phone, output.Id,
                 text => BeginInvoke(() => status.Text = text), token), token);
-            await running;
             status.Text = "发送已结束。";
         }
         catch (Exception) when (token.IsCancellationRequested) { status.Text = "已停止。"; }

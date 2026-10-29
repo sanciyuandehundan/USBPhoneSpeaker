@@ -15,10 +15,13 @@ jobs:
           dotnet-version: 9.0.x
       - name: 编译 Windows 便携版
         run: dotnet publish windows/USBPhoneSpeaker.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o build/windows
+      - name: 测试 USB 与音频协议
+        run: dotnet run --project tests/ProtocolTests -c Release
       - name: 打包
         shell: pwsh
         run: |
           Copy-Item README.md,LICENSE,THIRD_PARTY_NOTICES.txt build/windows/
+          Copy-Item third_party build/windows/ -Recurse
           Compress-Archive build/windows/* build/USBPhoneSpeaker-Windows-x64.zip
       - uses: actions/upload-artifact@v4
         with:

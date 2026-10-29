@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 The portable Windows build bundles the Microsoft .NET runtime (MIT),
-including its third-party notices. See the bundled ThirdPartyNotices.txt
+including its third-party notices. See the bundled third_party directory
 and https://github.com/dotnet/runtime/blob/main/LICENSE.TXT.
 
 The Apple Mobile Device service is an external prerequisite supplied by Apple;

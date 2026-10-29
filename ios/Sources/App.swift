@@ -6,6 +6,7 @@ struct USBPhoneSpeakerApp: App {
 
     var body: some Scene {
         WindowGroup {
+          ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Image(systemName: "hifispeaker.fill").font(.system(size: 56)).foregroundStyle(.cyan)
                 Text("USB 喇叭").font(.largeTitle.bold())
@@ -27,11 +28,11 @@ struct USBPhoneSpeakerApp: App {
                 }
                 .buttonStyle(.borderedProminent)
                 Text(receiver.statistics).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
-                Spacer()
                 Text("使用手机扬声器，避免蓝牙额外延迟。\n手机音量控制播放响度；无需开启个人热点。")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             .padding(28)
+          }
             .preferredColorScheme(.dark)
         }
     }

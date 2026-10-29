@@ -114,12 +114,7 @@ final class Receiver: ObservableObject {
 
     func stop(message: String = "已停止接收。") {
         active = false
-        queue.async { [self] in
-            cleanup()
-            do { try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
-            catch { update("停止音频会话失败：\(error.localizedDescription)") ; return }
-            update(message)
-        }
+        queue.async { [self] in fail(message) }
     }
 
     private func cleanup() {
@@ -132,7 +127,11 @@ final class Receiver: ObservableObject {
 
     private func fail(_ message: String) {
         cleanup()
-        DispatchQueue.main.async { self.active = false; self.status = message; self.statistics = "连接已结束" }
+        var finalMessage = message
+        do { try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
+        catch { finalMessage += "\n停止音频会话失败：\(error.localizedDescription)" }
+        let text = finalMessage
+        DispatchQueue.main.async { self.active = false; self.status = text; self.statistics = "连接已结束" }
     }
 
     private func update(_ message: String) {

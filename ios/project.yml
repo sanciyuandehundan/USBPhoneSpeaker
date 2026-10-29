@@ -26,4 +26,5 @@ targets:
         UILaunchScreen: {}
         UIBackgroundModes: [audio]
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         NSLocalNetworkUsageDescription: 通过 USB 接收电脑发送的声音。
