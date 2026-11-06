@@ -30,6 +30,12 @@ struct USBPhoneSpeakerApp: App {
                 Text(receiver.statistics).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
                 Text("使用手机扬声器，避免蓝牙额外延迟。\n手机音量控制播放响度；无需开启个人热点。")
                     .font(.footnote).foregroundStyle(.secondary)
+                Divider()
+                Label("USB 传文件", systemImage: "folder.fill").font(.headline)
+                Text("电脑：打开“Apple 设备”，选中 iPhone，在“文件”里选择“USB 喇叭”，添加文件。使用 iTunes 时，在“文件共享”中选择本 App。")
+                Text("手机：打开“档案”，进入“浏览”和“我的 iPhone”，再打开“USB 喇叭”文件夹。")
+                Text("传文件无需开始接收音频。删除本 App 也会删除这里的文件，请先移走需要保留的文件。")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             .padding(28)
           }

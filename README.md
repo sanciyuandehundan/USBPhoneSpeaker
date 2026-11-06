@@ -1,8 +1,8 @@
 # USBPhoneSpeaker · iPhone USB 喇叭
 
-将 Windows 的播放声音通过 USB 数据线传给 iPhone 原生 App。无需个人热点、Wi-Fi 或订阅。MIT 开源。
+将 Windows 的播放声音通过 USB 数据线传给 iPhone 原生 App，也支持 USB 文件共享，在 iPhone“档案”App 中管理传入的文件。无需个人热点、Wi-Fi 或订阅。MIT 开源。
 
-这是首个实验版本：自动编译与缓冲测试不能代替 iPhone 真机验收，端到端延迟尚未实测。
+当前仍为实验版本：自动编译与缓冲测试不能代替 iPhone 真机验收，端到端延迟尚未实测。
 
 ## 安装与使用
 
@@ -12,6 +12,20 @@
 4. 打开手机上的“USB 喇叭”，选缓冲档位，点击“开始接收”。
 5. 解压 Windows ZIP，运行 `USBPhoneSpeaker.exe`，选 USB 手机和电脑的播放设备，点击“开始发送”。
 6. 在电脑播放声音，调节 iPhone 音量。切换 Windows 播放设备后，需要停止、刷新并重新选择。
+
+## 通过 USB 传文件
+
+从 v0.2.0 开始，手机 App 接入苹果的原生文件共享。文件传输使用“Apple 设备”或 iTunes，不需要运行 Windows 音频发送端，也不需要在手机点击“开始接收”。
+
+1. 用 Sideloadly 安装新版 IPA。升级时使用原来的 Apple 账号和相同的 Bundle ID 覆盖安装；不要先删除旧 App。
+2. 用 USB 连接手机，解锁并信任电脑。
+3. 电脑打开“Apple 设备”，选中 iPhone，进入“文件”，选择“USB 喇叭”，点击“添加文件”或把文件拖入列表。使用 iTunes 时，进入设备的“文件共享”，选择“USB 喇叭”。
+4. 手机打开“档案”（简体中文界面叫“文件”），进入“浏览”，打开“我的 iPhone”里的“USB 喇叭”文件夹，即可查看、移动、重命名或分享文件。
+5. 要传回电脑，在“Apple 设备”的同一文件列表中选中文件，点击“储存”。
+
+文件保存在手机本地的 App 文稿目录，不上传云端。系统是否能预览文件取决于其格式；不支持预览的文件仍可储存或交给其他 App 打开。删除“USB 喇叭”会同时删除它保存的文件，需要保留时先在“档案”中移到其他位置。
+
+实现使用苹果的 `UIFileSharingEnabled` 和 `LSSupportsOpeningDocumentsInPlace`，不改变音频传输协议或播放缓冲。参见[苹果文件共享说明](https://support.apple.com/zh-cn/120402)和[文稿目录公开规则](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html)。
 
 ## 延迟优先的实现
 

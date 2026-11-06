@@ -1,10 +1,11 @@
-首个实验版本：将 Windows 播放声音通过 USB 直传至 iPhone。
+v0.2.0 实验版：在 iPhone USB 喇叭中增加 USB 文件共享。
 
-- Windows 便携程序：选择播放设备，捕获系统声音并通过 Apple USB 服务发送。
-- iPhone 原生接收端：未签名 IPA，可用 Sideloadly 签名安装，无需个人热点。
-- 低延迟设计：未压缩 PCM、事件驱动采集、无锁播放缓冲、积压丢弃，提供 8/15/30 ms 手机目标缓冲。
-- GitHub Actions 编译两端，并检查缓冲欠载、积压、环绕和协议头解析。
+- 在电脑“Apple 设备”的“文件”中选择“USB 喇叭”，即可通过 USB 添加文件；也支持 iTunes 文件共享。
+- 文件显示在手机“档案”的“我的 iPhone”中的“USB 喇叭”文件夹，可查看、移动或分享，也可传回电脑。
+- 手机 App 新增传文件操作说明。文件传输不需要开启音频接收，原有音频协议和低延迟缓冲保持不变。
 
-下载 Windows ZIP 后解压运行 EXE；IPA 交给 Sideloadly 安装。Windows 需要 Apple Devices 或 iTunes 提供的 USB 服务，iPhone 需要 iOS 16 或更新版本。
+已有 v0.1.0 的用户只需更新手机 IPA。用 Sideloadly、原来的 Apple 账号和相同的 Bundle ID 覆盖安装，不要先卸载。Windows 音频发送端无需更新。iPhone 需要 iOS 16 或更新版本。
 
-尚未完成 iPhone 真机收发、锁屏和端到端延迟实测。界面缓冲数字不等于总延迟，当前版本不承诺具体延迟数值。
+删除手机 App 会同时删除它保存的文件，请先移走需要保留的文件。
+
+尚未完成 iPhone 真机文件收发、音频播放、锁屏和端到端延迟实测。界面缓冲数字不等于总延迟，当前版本不承诺具体延迟数值。
