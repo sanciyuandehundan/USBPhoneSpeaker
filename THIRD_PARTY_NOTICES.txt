@@ -26,3 +26,7 @@ and https://github.com/dotnet/runtime/blob/main/LICENSE.TXT.
 
 The Apple Mobile Device service is an external prerequisite supplied by Apple;
 it is not redistributed by this project.
+
+plist-cil 2.3.1 (MIT)
+https://github.com/claunia/plist-cil
+See third_party/plist-cil-LICENSE.txt for its copyright and license notice.

@@ -15,17 +15,21 @@
 
 ## 通过 USB 传文件
 
-从 v0.2.0 开始，手机 App 接入苹果的原生文件共享。文件传输使用“Apple 设备”或 iTunes，不需要运行 Windows 音频发送端，也不需要在手机点击“开始接收”。
+从 v0.3.0 开始，Windows 程序可直接通过 USB 传文件，不需要打开“Apple 设备”或 iTunes，也不需要在手机点击“开始接收”。电脑仍需已有的 Apple Mobile Device USB 驱动；已经能连接手机时，不用替换或卸载驱动。
 
-1. 用 Sideloadly 安装新版 IPA。升级时使用原来的 Apple 账号和相同的 Bundle ID 覆盖安装；不要先删除旧 App。
-2. 安装后先打开一次手机“USB 喇叭”，看到“文件夹已准备好”，再用 USB 连接手机，解锁并信任电脑。App 会初始化文稿目录，并在空目录中放入传文件说明，避免空目录没有显示。
-3. 电脑打开“Apple 设备”，选中 iPhone，进入“文件”，选择“USB 喇叭”，点击“添加文件”或把文件拖入列表。使用 iTunes 时，进入设备的“文件共享”，选择“USB 喇叭”。
+1. 手机安装 0.2.1 或更新版 IPA，电脑使用 0.3.0 或更新版 Windows 程序。用 Sideloadly 升级时使用原来的 Apple 账号和相同的 Bundle ID 覆盖安装；不要先删除旧 App。
+2. 用 USB 连接手机，解锁并信任电脑。手机端 0.2.2 及更新版首次打开时会准备文稿目录；旧版第一次收到文件后，目录也会出现在“档案”里。
+3. 电脑打开 USBPhoneSpeaker，刷新并选中手机，点击“选择文件并发送”，可一次选择多个文件。等待程序提示传入完成。
 4. 手机打开“档案”（简体中文界面叫“文件”），进入“浏览”，打开“我的 iPhone”里的“USB 喇叭”文件夹，即可查看、移动、重命名或分享文件。
-5. 要传回电脑，在“Apple 设备”的同一文件列表中选中文件，点击“储存”。
+5. 同名文件自动加序号，不覆盖手机已有文件。中断或取消的文件保留“正在传输”后缀，可在手机删除；只有发送完成才恢复正常文件名。
+
+为了优先保持音频低延迟，文件传输与音频发送分开进行，传文件前先停止音频发送。当前 Windows 按钮用于电脑传到手机；需要传回电脑时，仍可在“Apple 设备”或 iTunes 的文件共享页面中保存文件。
+
+Windows 资源管理器中的“Apple iPhone / Internal Storage”是照片入口，不会显示 App 文稿文件夹。不要在那里查找“USB 喇叭”。
 
 文件保存在手机本地的 App 文稿目录，不上传云端。系统是否能预览文件取决于其格式；不支持预览的文件仍可储存或交给其他 App 打开。删除“USB 喇叭”会同时删除它保存的文件，需要保留时先在“档案”中移到其他位置。
 
-实现使用苹果的 `UIFileSharingEnabled` 和 `LSSupportsOpeningDocumentsInPlace`，不改变音频传输协议或播放缓冲。参见[苹果文件共享说明](https://support.apple.com/zh-cn/120402)和[文稿目录公开规则](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html)。
+手机使用苹果的 `UIFileSharingEnabled` 和 `LSSupportsOpeningDocumentsInPlace`；Windows 复用已经信任的 USB 配对，经苹果文稿共享服务直接上传。配对材料不写入项目文件或日志，不改变音频传输协议或播放缓冲。参见[苹果文件共享说明](https://support.apple.com/zh-cn/120402)和[文稿目录公开规则](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html)。
 
 ## 延迟优先的实现
 

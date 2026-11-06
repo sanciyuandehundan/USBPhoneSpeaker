@@ -3,6 +3,16 @@ using System.Text;
 using System.Xml.Linq;
 using USBPhoneSpeaker;
 
+if (args.Length > 0 && args[0] == "--usb-upload")
+{
+    using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+    var devices = await Usbmux.List(timeout.Token);
+    if (devices.Count != 1) throw new Exception("Connect exactly one test iPhone.");
+    var names = await FileTransfer.Send(devices[0], args[1..], Console.WriteLine, timeout.Token);
+    Console.WriteLine("Uploaded: " + string.Join(", ", names));
+    return;
+}
+
 static void Check(bool condition, string message)
 {
     if (!condition) throw new Exception(message);
@@ -20,4 +30,6 @@ var dict = XDocument.Parse(Encoding.UTF8.GetString(packet, 16, packet.Length - 1
 Check(Usbmux.Value(dict, "MessageType").Value == "Connect", "Wrong USB message type.");
 Check(Usbmux.Value(dict, "DeviceID").Value == "42", "Wrong device ID.");
 Check(Usbmux.Value(dict, "PortNumber").Value == "26720", "USB port must use network byte order.");
+Check(FileTransfer.AvailableName("文件.txt", new HashSet<string>(["文件.txt", "文件 (1).txt"])) == "文件 (2).txt",
+    "An existing phone file must not be overwritten.");
 Console.WriteLine("Windows protocol tests passed.");

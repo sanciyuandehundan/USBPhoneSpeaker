@@ -62,19 +62,31 @@ internal static class Usbmux
         return devices;
     }
 
-    public static async Task<TcpClient> Connect(int deviceId, CancellationToken ct)
+    public static async Task<byte[]> PairRecord(Phone phone, CancellationToken ct)
+    {
+        using var client = new TcpClient();
+        await client.ConnectAsync(IPAddress.Loopback, 27015, ct);
+        var response = await Exchange(client, Request("ReadPairRecord",
+            new XElement("key", "PairRecordID"), new XElement("string", phone.Serial)), ct);
+        var data = response.Elements("key").FirstOrDefault(k => k.Value == "PairRecordData")?.ElementsAfterSelf().First();
+        if (data == null) throw new IOException("尚未信任此电脑。请解锁 iPhone，重新连接 USB 并选择信任。");
+        return Convert.FromBase64String(data.Value);
+    }
+
+    public static async Task<TcpClient> Connect(int deviceId, CancellationToken ct, ushort port = 24680)
     {
         var client = new TcpClient { NoDelay = true, SendBufferSize = 8192 };
         try
         {
             await client.ConnectAsync(IPAddress.Loopback, 27015, ct);
-            ushort networkPort = BinaryPrimitives.ReverseEndianness((ushort)24680);
+            ushort networkPort = BinaryPrimitives.ReverseEndianness(port);
             var response = await Exchange(client, Request("Connect",
                 new XElement("key", "DeviceID"), new XElement("integer", deviceId),
                 new XElement("key", "PortNumber"), new XElement("integer", networkPort)), ct);
             int result = int.Parse(Value(response, "Number").Value);
             if (result != 0)
-                throw new IOException($"连接 iPhone 失败（Apple USB 错误 {result}）。请先在手机 App 中点击“开始接收”。");
+                throw new IOException($"连接 iPhone 失败（Apple USB 错误 {result}）。" +
+                    (port == 24680 ? "请先在手机 App 中点击“开始接收”。" : "请解锁手机并检查 USB 连接。"));
             return client;
         }
         catch
